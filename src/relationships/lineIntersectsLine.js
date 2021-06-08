@@ -14,8 +14,10 @@ export function lineIntersectsLine(lineA, lineB) {
       r = lineB[1][0],
       s = lineB[1][1],
       det, gamma, lambda;
-
-  det = (c - a) * (s - q) - (r - p) * (d - b);
+  // 两个向量 叉乘 
+  // v1 ( (c - a),  (d - b)  )     v2 ( (r - p),  (s - q) )
+  det = (c - a) * (s - q) - (r - p) * (d - b); 
+  // 为 0 平行
   if (det === 0) {
     return false;
   } else {
