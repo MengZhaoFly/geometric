@@ -19,7 +19,7 @@ export { polygonScaleX } from "./src/polygons/polygonScaleX";
 export { polygonScaleY } from "./src/polygons/polygonScaleY";
 export { polygonTranslate } from "./src/polygons/polygonTranslate";
 
-export { lineIntersectsLine } from "./src/relationships/lineIntersectsLine";
+export { lineIntersectsLine, isLineCross } from "./src/relationships/lineIntersectsLine";
 export { lineIntersectsPolygon } from "./src/relationships/lineIntersectsPolygon";
 export { pointInPolygon } from "./src/relationships/pointInPolygon";
 export { pointOnPolygon } from "./src/relationships/pointOnPolygon";
