@@ -56,6 +56,18 @@
     function equal(pointA, pointB) {
       return pointA[0] === pointB[0] && pointA[1] === pointB[1];
     }
+    function ratio(x1, x2, y1, y2, x3, x4, y3, y4) {
+      let lambda1 = (x3 * (y4 - y3) + y1 * (x4 - x3) - y3 * (x4 - x3) - x1 * (y4 - y3))
+        / ((x2 - x1) * (y4 - y3) - (x4 - x3) * (y2 - y1));
+      let lambda2 = (x1 * (y2 - y1) + y3 * (x2 - x1) - y1 * (x2 - x1) - x3 * (y2 - y1))
+        / ((x4 - x3) * (y2 - y1) - (x2 - x1) * (y4 - y3));
+      return {
+        lambda1,
+        lambda2
+      }
+    }
+    let ratios = ratio(0, -1, 0, 1, -1, .5, 2, .5)
+    console.log(ratios)
   </script>
 </body>
 
