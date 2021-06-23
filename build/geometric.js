@@ -337,8 +337,10 @@
         s = lineB[1][1],
         det,
         gamma,
-        lambda;
-    det = (c - a) * (s - q) - (r - p) * (d - b);
+        lambda; // 两个向量 叉乘 
+    // v1 ( (c - a),  (d - b)  )     v2 ( (r - p),  (s - q) )
+
+    det = (c - a) * (s - q) - (r - p) * (d - b); // 为 0 平行
 
     if (det === 0) {
       return false;
@@ -366,26 +368,67 @@
 
   function equal(pointA, pointB) {
     return pointA[0] === pointB[0] && pointA[1] === pointB[1];
+  } // isLineCross([0,0], [1,1], [1,0],[0,1])
+  // isLineCross([0,0], [1,1], [3,3],[4,4])
+
+
+  function subtract(_, end, start) {
+    return [end[0] - start[0], end[1] - start[1]];
   }
 
+  function cross$1(v1, v2) {
+    return v1[0] * v2[1] - v2[0] * v1[1];
+  }
+
+  function isCross(p1, p2, p3, p4) {
+    var v1 = subtract([], p4, p3);
+    var v2 = subtract([], p1, p3);
+    var v3 = subtract([], p2, p3);
+    var z1 = cross$1(v1, v2);
+    var z2 = cross$1(v1, v3);
+    return z1 * z2 <= 0;
+  }
+
+  function isLineCross(line1, line2) {
+    return isCross(line1[0], line1[1], line2[0], line2[1]) && isCross(line2[0], line2[1], line1[0], line1[1]);
+  }
+  var line1 = [[50.054358, 8.693184], [50.055604, 8.685873]];
+  var line2 = [[50.054228, 8.69338], [50.054358, 8.693184]];
+  var a = isLineCross(line1, line2);
+  var b = isLineCross(line2, line1);
+  console.log(a, b);
+
   function _toConsumableArray(arr) {
-    return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
+    return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();
   }
 
   function _arrayWithoutHoles(arr) {
-    if (Array.isArray(arr)) {
-      for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];
-
-      return arr2;
-    }
+    if (Array.isArray(arr)) return _arrayLikeToArray(arr);
   }
 
   function _iterableToArray(iter) {
-    if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
+    if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter);
+  }
+
+  function _unsupportedIterableToArray(o, minLen) {
+    if (!o) return;
+    if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+    var n = Object.prototype.toString.call(o).slice(8, -1);
+    if (n === "Object" && o.constructor) n = o.constructor.name;
+    if (n === "Map" || n === "Set") return Array.from(o);
+    if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
+  }
+
+  function _arrayLikeToArray(arr, len) {
+    if (len == null || len > arr.length) len = arr.length;
+
+    for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i];
+
+    return arr2;
   }
 
   function _nonIterableSpread() {
-    throw new TypeError("Invalid attempt to spread non-iterable instance");
+    throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }
 
   // Closes a polygon if it's not closed already. Does not modify input polygon.
@@ -445,6 +488,16 @@
   // based on the ray-casting algorithm from https://web.archive.org/web/20180115151705/https://wrf.ecse.rpi.edu//Research/Short_Notes/pnpoly.html
   // Wikipedia: https://en.wikipedia.org/wiki/Point_in_polygon#Ray_casting_algorithm
   // Returns a boolean.
+
+  /**
+   * 一个点 引伸出来的射线 
+   * 和多边形相交 代表进入 多边形
+   * 再次相交    代表出去 多边形
+   * 再次相交    代表进入 多边形
+   * @param {*} point 
+   * @param {*} polygon 
+   * @returns 
+   */
   function pointInPolygon(point, polygon) {
     var x = point[0],
         y = point[1],
@@ -454,7 +507,11 @@
       var xi = polygon[i][0],
           yi = polygon[i][1],
           xj = polygon[j][0],
-          yj = polygon[j][1];
+          yj = polygon[j][1]; // yi > y != yj > y 保证这个点 引伸出来的射线 会和线段相交 否则不可能相交
+      // 已知两点坐标 和 时，常用两点式：
+      // x 为 传入点 x
+      // t: ((xj - xi) * (y - yi)) / (yj - yi) + xi 根据 y 算出在线段上的 的x
+      // x 小于 那么在左侧，表示 射线 必经过
 
       if (yi > y != yj > y && x < (xj - xi) * (y - yi) / (yj - yi) + xi) {
         inside = !inside;
@@ -563,6 +620,7 @@
   exports.polygonScaleY = polygonScaleY;
   exports.polygonTranslate = polygonTranslate;
   exports.lineIntersectsLine = lineIntersectsLine;
+  exports.isLineCross = isLineCross;
   exports.lineIntersectsPolygon = lineIntersectsPolygon;
   exports.pointInPolygon = pointInPolygon;
   exports.pointOnPolygon = pointOnPolygon;
